@@ -1,0 +1,4 @@
+provider:
+  ip_address: '254.254.254.254'
+  username: 'username'
+  password: 'password1234'

@@ -1,0 +1,270 @@
+---
+- name: Configure GNOME3 & Graphical Interface Settings
+  hosts: "*"
+  become: yes
+  tasks:
+    
+    - name: Gather the package facts
+      package_facts:
+        manager: auto      
+    
+    - name: Disable the GNOME3 Login User List
+      ini_file:
+        dest: /etc/dconf/db/gdm.d/00-security-settings
+        section: org/gnome/login-screen
+        option: disable-user-list
+        value: 'true'
+        no_extra_spaces: true
+        create: true
+
+    - name: Prevent user modification of GNOME3 disablement of Login User List
+      lineinfile:
+        path: /etc/dconf/db/gdm.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/login-screen/disable-user-list$
+        line: /org/gnome/login-screen/disable-user-list
+        create: true
+    
+    - name: Prevent user modification of GNOME3 disablement of Login User List
+      lineinfile:
+        path: /etc/dconf/db/gdm.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/login-screen/disable-user-list$
+        line: /org/gnome/login-screen/disable-user-list
+        create: true
+       
+        #SV-230351r792899_rule
+
+    - name: Detect if removal-action can be found on /etc/dconf/db/local.d/
+      find:
+        path: /etc/dconf/db/local.d/
+        contains: ^\s*removal-action
+      register: dconf_gnome_lock_screen_on_smartcard_removal_config_files
+      when:
+      - '"gdm" in ansible_facts.packages'
+
+    - name: Configure removal-action - default file
+      ini_file:
+        dest: /etc/dconf/db/local.d//00-security-settings
+        section: org/gnome/settings-daemon/peripherals/smartcard
+        option: removal-action
+        value: '''lock-screen'''
+        create: true
+      when:
+      - '"gdm" in ansible_facts.packages'
+
+    - name: Configure removal-action - existing files
+      ini_file:
+        dest: '{{ item.path }}'
+        section: org/gnome/settings-daemon/peripherals/smartcard
+        option: removal-action
+        value: '''lock-screen'''
+        create: true
+      with_items: '{{ dconf_gnome_lock_screen_on_smartcard_removal_config_files.files }}'
+      when:
+      - '"gdm" in ansible_facts.packages'
+
+    - name: Detect if lock for removal-action can be found on /etc/dconf/db/local.d/
+      find:
+        path: /etc/dconf/db/local.d/locks
+        contains: ^\s*removal-action
+      register: dconf_gnome_lock_screen_on_smartcard_removal_lock_files
+      when:
+      - '"gdm" in ansible_facts.packages'
+
+    - name: Prevent user modification removal-action - default file
+      lineinfile:
+        path: /etc/dconf/db/local.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/settings-daemon/peripherals/smartcard/removal-action$
+        line: /org/gnome/settings-daemon/peripherals/smartcard/removal-action
+        create: true
+      when:
+      - '"gdm" in ansible_facts.packages'
+      - dconf_gnome_lock_screen_on_smartcard_removal_lock_files is defined and dconf_gnome_lock_screen_on_smartcard_removal_lock_files.matched == 0
+
+    - name: Prevent user modification removal-action - existing files
+      lineinfile:
+        path: '{{ item.path }}'
+        regexp: ^/org/gnome/settings-daemon/peripherals/smartcard/removal-action$
+        line: /org/gnome/settings-daemon/peripherals/smartcard/removal-action
+        create: true
+        with_items: '{{ dconf_gnome_lock_screen_on_smartcard_removal_lock_files.files }}'
+      when:
+      - '"gdm" in ansible_facts.packages'
+      - dconf_gnome_lock_screen_on_smartcard_removal_lock_files is defined and dconf_gnome_lock_screen_on_smartcard_removal_lock_files.matched > 0
+
+        #SV-244535r743854_rule        
+    - name: XCCDF Value var_screensaver_lock_delay # promote to variable
+      set_fact:
+        var_screensaver_lock_delay: !!str 5    
+    - name: Set GNOME3 Screensaver Lock Delay After Activation Period
+      ini_file:
+        dest: /etc/dconf/db/local.d/00-security-settings
+        section: org/gnome/desktop/screensaver
+        option: lock-delay
+        value: uint32 {{ var_screensaver_lock_delay }}
+        create: true
+        no_extra_spaces: true
+      when:
+      - '"gdm" in ansible_facts.packages'
+       
+      #SV-230354r743990_rule
+    - name: Prevent user modification of GNOME lock-delay
+      lineinfile:
+        path: /etc/dconf/db/local.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/desktop/screensaver/lock-delay$
+        line: /org/gnome/desktop/screensaver/lock-delay
+        create: true
+      when:
+      - '"gdm" in ansible_facts.packages'
+
+    - name: Enable GNOME3 Screensaver Lock After Idle Period
+      ini_file:
+        dest: /etc/dconf/db/local.d/00-security-settings
+        section: org/gnome/desktop/screensaver
+        option: lock-enabled
+        value: 'true'
+        create: true
+        no_extra_spaces: true
+      when:
+        - '"gdm" in ansible_facts.packages'   
+   
+    - name: Prevent user modification of GNOME lock-enabled
+      lineinfile:
+        path: /etc/dconf/db/local.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/desktop/screensaver/lock-enabled$
+        line: /org/gnome/desktop/screensaver/lock-enabled
+        create: true
+      when:
+        - '"gdm" in ansible_facts.packages'
+   
+    - name: Check GNOME3 screenserver disable-lock-screen false
+      command: gsettings get org.gnome.desktop.lockdown disable-lock-screen
+      register: cmd_out
+      when:
+        - '"gdm" in ansible_facts.packages'
+
+    - name: Update GNOME3 screenserver disable-lock-screen false
+      command: gsettings set org.gnome.desktop.lockdown disable-lock-screen false
+      when:
+        - '"gdm" in ansible_facts.packages' 
+
+    - name: Disable GDM Automatic Login
+      ini_file:
+        dest: /etc/gdm/custom.conf
+        section: daemon
+        option: AutomaticLoginEnable
+        value: 'false'
+        no_extra_spaces: true
+        create: true
+      when:
+        - '"gdm" in ansible_facts.packages'
+
+    - name: Set GNOME3 Screensaver Inactivity Timeout
+      ini_file:
+        dest: /etc/dconf/db/local.d/00-security-settings
+        section: org/gnome/desktop/session
+        option: idle-delay
+        value: uint32 900
+        create: true
+        no_extra_spaces: true
+      when:
+        - '"gdm" in ansible_facts.packages'
+
+    - name: Prevent user modification of GNOME Session idle-delay
+      lineinfile:
+        path: /etc/dconf/db/local.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/desktop/session/idle-delay$
+        line: /org/gnome/desktop/session/idle-delay
+        create: true
+      when:
+        - '"gdm" in ansible_facts.packages'
+
+    - name: Disable Ctrl-Alt-Del Reboot Key Sequence in GNOME3
+      ini_file:
+        dest: /etc/dconf/db/local.d/00-security-settings
+        section: org/gnome/settings-daemon/plugins/media-keys
+        option: logout
+        value: ''''''
+        create: true
+        no_extra_spaces: true
+      when:
+        - '"gdm" in ansible_facts.packages'
+
+    - name: Prevent user modification of GNOME disablement of Ctrl-Alt-Del
+      lineinfile:
+        path: /etc/dconf/db/local.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/settings-daemon/plugins/media-keys/logout$
+        line: /org/gnome/settings-daemon/plugins/media-keys/logout
+        create: true
+      when:
+        - '"gdm" in ansible_facts.packages'
+
+        
+    - name: Enable GNOME3 Login Warning Banner
+      ini_file:
+        dest: /etc/dconf/db/gdm.d/00-security-settings
+        section: org/gnome/login-screen
+        option: banner-message-enable
+        value: 'true'
+        create: true
+        no_extra_spaces: true
+      when: '"gdm" in ansible_facts.packages'
+
+    - name: Prevent user modification of GNOME banner-message-enabled
+      lineinfile:
+        path: /etc/dconf/db/gdm.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/login-screen/banner-message-enable$
+        line: /org/gnome/login-screen/banner-message-enable
+        create: true
+      when: '"gdm" in ansible_facts.packages'
+
+    - name: Set the GNOME3 Login Warning Banner Text
+      file:
+        path: /etc/dconf/db/{{ item }}
+        owner: root
+        group: root
+        mode: 493
+        state: directory
+      with_items:
+        - gdm.d
+        - gdm.d/locks
+      when: '"gdm" in ansible_facts.packages'
+
+
+    - name: Set the GNOME3 Login Warning Banner Text
+      file:
+        path: /etc/dconf/db/gdm.d/{{ item }}
+        owner: root
+        group: root
+        mode: 420
+        state: touch
+      with_items:
+        - 00-security-settings
+        - locks/00-security-settings-lock
+      when: '"gdm" in ansible_facts.packages'
+
+    
+    - name: 
+      include_vars: /home/admin/RMF/apply/redhat/OS8/vars/banner.yml 
+    - name: Set the GNOME3 Login Warning Banner Text
+      ini_file:
+        dest: /etc/dconf/db/gdm.d/00-security-settings
+        section: org/gnome/login-screen
+        option: banner-message-text
+        value: '''{{ banner |regex_replace("^\^(.*)\$$", "\1") | regex_replace("^\((.*\.)\|.*\)$",
+          "\1") | regex_replace("\[\\s\\n\]\+"," ") | regex_replace("\(\?:\[\\n\]\+\|\(\?:\\\\n\)\+\)",
+          "(n)*") | regex_replace("\\", "") | regex_replace("\(n\)\*", "\\n") }}'''
+        create: true
+        no_extra_spaces: true
+      when: '"gdm" in ansible_facts.packages'
+
+    - name: Prevent user modification of the GNOME3 Login Warning Banner Text
+      lineinfile:
+        path: /etc/dconf/db/gdm.d/locks/00-security-settings-lock
+        regexp: ^/org/gnome/login-screen/banner-message-text$
+        line: /org/gnome/login-screen/banner-message-text
+        create: true
+        state: present
+      when: '"gdm" in ansible_facts.packages' 
+    
+    - name: Dconf Update
+      command: dconf update

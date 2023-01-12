@@ -1,0 +1,30 @@
+---
+- name: Configuring AIDE  
+  hosts: "*"
+  become: yes
+  tasks:
+
+
+    - name: Set audit_tools fact
+      set_fact:
+        audit_tools:
+          /usr/sbin/auditctl
+          /usr/sbin/auditd
+          /usr/sbin/augenrules
+          /usr/sbin/aureport
+          /usr/sbin/ausearch
+          /usr/sbin/autrace
+          /usr/sbin/rsyslogd
+    
+    - name: Gather the package facts
+      package_facts:
+        manager: auto
+                          
+    - name: Configure AIDE to properly protect audit tools
+      lineinfile:
+        path: /etc/aide.conf
+        line: '{{ item }} p+i+n+u+g+s+b+acl+xattrs+sha512 '
+      with_items: '{{ audit_tools }}'
+      when: '"aide" in ansible_facts.packages'
+
+

@@ -1,0 +1,46 @@
+---
+- name: Configure grubby2 
+  hosts: "*"
+  become: yes
+  tasks: 
+
+
+    - name: XCCDF Value var_slub_debug_options # promote to variable
+      set_fact:
+        var_slub_debug_options: !!str P
+
+    - name: Gather the package facts
+      package_facts:
+        manager: auto
+
+    - name: Update grub defaults and the bootloader menu
+      command: /sbin/grubby --update-kernel=ALL --args="page_poison=1"
+      when:
+      - '"grub2-common" in ansible_facts.packages'
+
+    - name: Update grub defaults and the bootloader menu
+      command: /sbin/grubby --update-kernel=ALL --args="slub_debug={{ var_slub_debug_options }}"
+      when:
+      - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+      - '"grub2-common" in ansible_facts.packages'
+
+    - name: Update grub defaults and the bootloader menu
+      command: /sbin/grubby --update-kernel=ALL --args="pti=on"
+      when:
+      - '"grub2-common" in ansible_facts.packages'
+
+    - name: Update grub defaults and the bootloader menu
+      command: /sbin/grubby --update-kernel=ALL --args="vsyscall=none"
+      when:
+      - '"grub2-common" in ansible_facts.packages'
+
+    - name: Update grub defaults and the bootloader menu
+      command: /sbin/grubby --update-kernel=ALL --args="audit=1"
+      when:
+      - '"grub2-common" in ansible_facts.packages'
+
+    - name: Update grub defaults and the bootloader menu
+      command: /sbin/grubby --update-kernel=ALL --args="audit_backlog_limit=8192"
+      when:
+      - '"grub2-common" in ansible_facts.packages'
+

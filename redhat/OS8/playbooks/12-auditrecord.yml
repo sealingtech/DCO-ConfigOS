@@ -1,0 +1,20 @@
+---
+- name: Inserting audit rules and parameters
+  hosts: "*"
+  become: true
+  vars_files:
+    - /home/admin/RMF/apply/redhat/OS8/vars/auditrules.yml
+  tasks:
+   
+    - name: harden auditd 
+      template:
+        src: /home/admin/RMF/apply/redhat/OS8/templates/auditrules.j2
+        dest: /etc/audit/rules.d/10-audit.rules
+        mode: 0640
+        backup: yes
+        
+    - name: restart auditd
+      service:
+        name: auditd
+        state: restarted    
+        use: service 

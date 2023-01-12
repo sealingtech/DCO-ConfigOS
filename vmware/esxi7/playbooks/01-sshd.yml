@@ -1,0 +1,24 @@
+---
+- name: lockdown ESXI7
+  hosts: "*"
+  become: no
+  gather_facts: no
+  vars_files:
+    -  /home/admin/RMF/apply/vmware/esxi7/vars/banner.yml
+    -  /home/admin/RMF/apply/vmware/esxi7/vars/sshd_config.yml
+  tasks:
+
+    - name: Modify the System Login Banner - ensure correct banner
+      copy:
+        dest: /etc/issue
+        content: '{{ banner | regex_replace("^\^(.*)\$$", "\1") | regex_replace("^\((.*\.)\|.*\)$",
+           "\1") | regex_replace("\[\\s\\n\]\+"," ") | regex_replace("\(\?:\[\\n\]\+\|\(\?:\\\\n\)\+\)",
+           "\n") | regex_replace("\\", "") | wordwrap() }}'
+
+    - name: Harden sshd_configuration
+      template:
+        src: /home/admin/RMF/apply/vmware/esxi7/templates/sshd_config.j2
+        dest: /etc/ssh/sshd_config
+        mode: 600
+        backup: yes
+

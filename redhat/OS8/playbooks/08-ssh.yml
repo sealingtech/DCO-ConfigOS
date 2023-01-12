@@ -1,0 +1,52 @@
+---
+- name: Enforcing SSH configuration
+  hosts: "*"
+  become: true
+  vars_files:
+    - /home/admin/RMF/apply/redhat/OS8/vars/sshd_config.yml
+    - /home/admin/RMF/apply/redhat/OS8/vars/sshd.yml
+    - /home/admin/RMF/apply/redhat/OS8/vars/banner.yml
+  tasks:
+   
+    - name: Harden sshd_configuration 
+      template:
+        src: /home/admin/RMF/apply/redhat/OS8/templates/sshd_config.j2
+        dest: /etc/ssh/sshd_config
+        mode: 600
+        backup: yes
+
+    - name: Modify the System Login Banner - ensure correct banner
+      copy:
+        dest: /etc/issue
+        content: '{{ banner | regex_replace("^\^(.*)\$$", "\1") | regex_replace("^\((.*\.)\|.*\)$",
+           "\1") | regex_replace("\[\\s\\n\]\+"," ") | regex_replace("\(\?:\[\\n\]\+\|\(\?:\\\\n\)\+\)",
+           "\n") | regex_replace("\\", "") | wordwrap() }}' 
+
+    - name: RNG
+      template:
+        src: /home/admin/RMF/apply/redhat/OS8/templates/sshd.j2
+        dest: /etc/sysconfig/sshd
+        mode: 600
+        backup: yes
+    
+    - name: locate pub/priv host key files 
+      find:
+        path: /etc/ssh/
+        patterns: '*key*'
+        file_type: file
+        recurse: no
+      register: key
+
+    - name: SSH private host key files must have mode 0600 or less permissive.
+      file:
+        path: /etc/ssh/
+        owner: root
+        group: root
+        mode: 0600
+      with_items: "{{ key.files }}"
+        
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted    
+        

@@ -1,0 +1,117 @@
+---
+- name: Enforcing Blacklist 
+  hosts: "*"
+  become: yes
+  tasks:
+
+    - name: Ensure kernel module 'cramfs' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/cramfs.conf
+        regexp: cramfs
+        line: install cramfs /bin/true
+
+    - name: Ensure kernel module 'cramfs' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/cramfs.conf
+        regexp: ^blacklist cramfs$
+        line: blacklist cramfs
+
+    - name: Ensure kernel module 'usb-storage' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/usb-storage.conf
+        regexp: usb-storage
+        line: install usb-storage /bin/true
+
+    - name: Ensure kernel module 'usb-storage' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/usb-storage.conf
+        regexp: ^blacklist usb-storage$
+        line: blacklist usb-storage
+
+    - name: Ensure kernel module 'bluetooth' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/bluetooth.conf
+        regexp: bluetooth
+        line: install bluetooth /bin/true
+
+    - name: Ensure kernel module 'bluetooth' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/bluetooth.conf
+        regexp: ^blacklist bluetooth$
+        line: blacklist bluetooth
+
+    - name: Ensure kernel module 'tipc' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/tipc.conf
+        regexp: tipc
+        line: install tipc /bin/true
+ 
+    - name: Ensure kernel module 'tipc' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/tipc.conf
+        regexp: ^blacklist tipc$
+        line: blacklist tipc 
+
+    - name: Ensure kernel module 'sctp' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/sctp.conf
+        regexp: sctp
+        line: install sctp /bin/true
+
+    - name: Ensure kernel module 'sctp' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/sctp.conf
+        regexp: ^blacklist sctp$
+        line: blacklist sctp
+
+    - name: Ensure kernel module 'firewire-core' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/firewire-core.conf
+        regexp: firewire-core
+        line: install firewire-core /bin/true
+
+    - name: Ensure kernel module 'firewire-core' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/firewire-core.conf
+        regexp: ^blacklist firewire-core$
+        line: blacklist firewire-core
+
+    - name: Ensure kernel module 'can' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/can.conf
+        regexp: can
+        line: install can /bin/true
+
+    - name: Ensure kernel module 'can' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/can.conf
+        regexp: ^blacklist can$
+        line: blacklist can
+
+    - name: Ensure kernel module 'atm' is disabled
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/atm.conf
+        regexp: atm
+        line: install atm /bin/true
+
+    - name: Ensure kernel module 'atm' is blacklisted
+      lineinfile:
+        create: true
+        dest: /etc/modprobe.d/atm.conf
+        regexp: ^blacklist atm$
+        line: blacklist atm

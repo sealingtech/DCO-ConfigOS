@@ -1,0 +1,164 @@
+- name: Enforcing Crypto-Policies
+  hosts: "*"
+  become: yes 
+  tasks: 
+
+    - name: XCCDF Value sshd_approved_macs / sshd_approved_ciphers # promote to variable
+      set_fact:
+        sshd_approved_macs: !!str hmac-sha2-512,hmac-sha2-256
+        sshd_approved_ciphers: !!str aes256-ctr,aes192-ctr,aes128-ctr
+        sshdserver_approved_macs: !!str hmac-sha2-512,hmac-sha2-256
+        sshdserver_approved_ciphers: !!str aes256-ctr,aes192-ctr,aes128-ctr
+        path: /etc/crypto-policies/back-ends/gnutls.config
+        correct_value: +VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0
+        lineinfile_reg: \+VERS-ALL:-VERS-DTLS0\.9:-VERS-SSL3\.0:-VERS-TLS1\.0:-VERS-TLS1\.1:-VERS-DTLS1\.0
+
+    - name: 'Configure SSH Daemon to Use FIPS 140-2 Validated MACs: openssh.config'
+      block:
+
+        - name: Check for duplicate values
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/openssh.config
+            create: false
+            regexp: ^.*MACs\s+
+            state: absent
+          check_mode: true
+          changed_when: false
+          register: dupes
+
+        - name: Deduplicate values from /etc/crypto-policies/back-ends/openssh.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/openssh.config
+            create: false
+            regexp: ^.*MACs\s+
+            state: absent
+          when: dupes.found is defined and dupes.found > 1
+
+        - name: Insert correct line to /etc/crypto-policies/back-ends/openssh.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/openssh.config
+            create: true
+            regexp: ^.*MACs\s+
+            line: MACs {{ sshd_approved_macs }}
+
+    - name: 'Configure SSH Daemon to Use FIPS 140-2 Validated Ciphers: openssh.config'
+      block:
+
+        - name: Check for duplicate values
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/openssh.config
+            create: false
+            regexp: ^.*Ciphers\s+
+            state: absent
+          check_mode: true
+          changed_when: false
+          register: dupes
+
+        - name: Deduplicate values from /etc/crypto-policies/back-ends/openssh.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/openssh.config
+            create: false
+            regexp: ^.*Ciphers\s+
+            state: absent
+          when: dupes.found is defined and dupes.found > 1
+
+        - name: Insert correct line to /etc/crypto-policies/back-ends/openssh.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/openssh.config
+            create: true
+            regexp: ^.*Ciphers\s+
+            line: Ciphers {{ sshd_approved_ciphers }}
+            state: present
+ 
+    - name: 'Configure SSH Daemon to Use FIPS 140-2 Validated MACs: opensshserver.config'
+      block:
+
+        - name: Check for duplicate values
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/opensshserver.config
+            create: false
+            regexp: ^.*-oMACs\s+
+            state: absent
+          check_mode: true
+          changed_when: false
+          register: dupes
+
+        - name: Deduplicate values from /etc/crypto-policies/back-ends/opensshserver.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/opensshserver.config
+            create: false
+            regexp: ^.*oMACs\s+
+            state: absent
+          when: dupes.found is defined and dupes.found > 1
+
+        - name: Insert correct line to /etc/crypto-policies/back-ends/opensshserver.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/opensshserver.config
+            create: true
+            regexp: ^.*-oMACs\s+
+            line: "-oMACs={{ sshdserver_approved_macs }}"
+    
+    - name: 'Configure SSH Daemon to Use FIPS 140-2 Validated Ciphers: opensshserver.config'
+      block:
+
+        - name: Check for duplicate values
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/opensshserver.config
+            create: false
+            regexp: ^.*-oCiphers=\s
+            state: absent
+          check_mode: true
+          changed_when: false
+          register: dupes
+
+        - name: Deduplicate values from /etc/crypto-policies/back-ends/opensshserver.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/opensshserver.config
+            create: false
+            regexp: ^.*-oCiphers=\s
+            state: absent
+          when: dupes.found is defined and dupes.found > 1
+
+        - name: Insert correct line to /etc/crypto-policies/back-ends/opensshserver.config
+          lineinfile:
+            path: /etc/crypto-policies/back-ends/opensshserver.config
+            create: true
+            regexp: ^.*-oCiphers=\s
+            line: "-oCiphers={{ sshdserver_approved_ciphers }}"
+            state: present
+   
+
+    - name: 'Configure GnuTLS library to use DoD-approved TLS Encryption: stat'
+      stat:
+        path: '{{ path }}'
+        follow: true
+      register: gnutls_file
+
+    - name: 'Configure GnuTLS library to use DoD-approved TLS Encryption: Add'
+      lineinfile:
+        path: '{{ path }}'
+        regexp: '{{ lineinfile_reg }}'
+        line: '{{ correct_value }}'
+        create: true
+      when: not gnutls_file.stat.exists or gnutls_file.stat.size <= correct_value|length
+
+    - name: Configure GnuTLS library to use DoD-approved TLS Encryption
+      block:
+
+        - name: 'Configure GnuTLS library to use DoD-approved TLS Encryption: Existing value check'
+          lineinfile:
+            path: '{{ path }}'
+            create: false
+            regexp: '{{ lineinfile_reg }}'
+            state: absent
+          check_mode: true
+          changed_when: false
+          register: gnutls
+
+        - name: 'Configure GnuTLS library to use DoD-approved TLS Encryption: Update'
+          replace:
+            path: '{{ path }}'
+            regexp: (\+VERS-ALL(?::-VERS-[A-Z]+\d\.\d)+)
+            replace: '{{ correct_value }}'
+          when: gnutls.found is defined and gnutls.found != 1
+          when: gnutls_file.stat.exists and gnutls_file.stat.size > correct_value|length

@@ -1,0 +1,72 @@
+---
+# tasks file for OSv8
+#
+
+
+  - import_playbook: 00-packages.yml
+    tags: 
+      - "00"
+ 
+  - import_playbook: 01-auditd.yml
+    tags: 
+      - "01"
+
+  - import_playbook: 02-blacklist.yml
+    tags: 
+      - "02"
+ 
+  - import_playbook: 03-cryptopolicies.yml
+    tags:
+      - "03"
+
+  - import_playbook: 04-gnome.yml
+    tags:
+      - "04"
+
+  - import_playbook: 05-grubby.yml
+    tags:
+      - "05"
+
+  - import_playbook: 06-miscellaneous.yml
+    tags:
+      - "06"
+
+  - import_playbook: 07-permission.yml
+    tags: 
+      - "07"
+  
+  - import_playbook: 08-ssh.yml
+    tags: 
+      - "08"
+
+  - import_playbook: 09-sudoers.yml
+    tags: 
+      - "09"
+
+  - import_playbook: 10-sysctl.yml
+    tags: 
+      - "10"
+
+  - import_playbook: 11-usbgaurd.yml
+    tags: 
+      - "11"
+
+  - import_playbook: 12-auditrecord.yml
+    tags: 
+      - "12"
+
+  - import_playbook: 13-tmux.yml
+    tags: 
+      - "13"
+
+  - import_playbook: 14-aide.yml
+    tags: 
+      - "14"
+
+  - import_playbook: 15-chronyd.yml
+    tags: 
+      - "15"
+
+  - import_playbook: 16-rsyslogd.yml
+    tags: 
+      - "16"

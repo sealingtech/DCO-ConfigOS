@@ -1,0 +1,4 @@
+- name: save configuration
+  panos_commit_firewall:
+    provider: '{{ provider }}'
+  when: panosSTIG_save_configuration_Manage

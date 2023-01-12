@@ -1,0 +1,29 @@
+---
+- name: Configuring Rsyslog Parameters 
+  hosts: "*"
+  become: yes
+  tasks:
+
+
+
+    - name: Deduplicate values from /etc/rsyslog.conf
+      lineinfile:
+        path: /etc/rsyslog.conf
+        regexp: "{{ item }}"
+        state: absent  
+      with_items:
+        - ^$ActionSendStreamDriverAuthMode
+        - ^$ActionSendStreamDriverMode
+        - ^$DefaultNetstreamDriver 
+
+    - name: Insert correct line to /etc/rsyslog.conf
+      lineinfile:
+        path: /etc/rsyslog.conf
+        create: true
+        line: "{{ item }}"
+        state: present
+      with_items:
+        - $ActionSendStreamDriverAuthMode x509/name 
+        - $ActionSendStreamDriverMode 1
+        - $DefaultNetstreamDriver gtls
+

@@ -1,0 +1,98 @@
+---
+- name: Configuring auditd
+  hosts: "*" 
+  become: yes
+  tasks:
+
+
+  - name: Gather the package facts
+    package_facts:
+      manager: auto
+
+  - name: XCCDF Value var_auditd_space_left_percentage # promote to variable
+    set_fact:
+      var_auditd_space_left_percentage: !!str 25
+      var_auditd_disk_error_action: !!str syslog|single|halt
+      var_auditd_disk_full_action: !!str syslog|single|halt
+      var_auditd_space_left_action: !!str email
+
+  - name: Configure auditd space_left on Low Disk Space
+    lineinfile:
+      dest: /etc/audit/auditd.conf
+      line: space_left = {{ var_auditd_space_left_percentage }}%
+      regexp: ^\s*space_left\s*=\s*.*$
+      state: present
+      create: true
+    when: '"audit" in ansible_facts.packages'
+
+  - name: Configure auditd Disk Error Action on Disk Error
+    lineinfile:
+      dest: /etc/audit/auditd.conf
+      line: disk_error_action = {{ var_auditd_disk_error_action.split('|')[0] }}
+      regexp: ^\s*disk_error_action\s*=\s*.*$
+      state: present
+      create: true
+    when: '"audit" in ansible_facts.packages'
+
+  - name: Configure auditd Disk Full Action when Disk Space Is Full
+    lineinfile:
+      dest: /etc/audit/auditd.conf
+      line: disk_full_action = {{ var_auditd_disk_full_action.split('|')[0] }}
+      regexp: ^\s*disk_full_action\s*=\s*.*$
+      state: present
+      create: true
+    when: '"audit" in ansible_facts.packages'
+
+  - name: Configure auditd space_left Action on Low Disk Space
+    lineinfile:
+      dest: /etc/audit/auditd.conf
+      line: space_left_action = {{ var_auditd_space_left_action }}
+      regexp: ^\s*space_left_action\s*=\s*.*$
+      state: present
+      create: true
+    when: '"audit" in ansible_facts.packages'
+
+
+  - name: Check for duplicate values
+    lineinfile:
+      path: /etc/audit/auditd.conf
+      create: false
+      regexp: (?i)^\s*name_format\s*=\s*
+      state: absent
+    check_mode: true
+    changed_when: false
+    register: dupes
+
+  - name: Deduplicate values from /etc/audit/auditd.conf
+    lineinfile:
+      path: /etc/audit/auditd.conf
+      create: false
+      regexp: (?i)^\s*name_format\s*=\s*
+      state: absent
+    when: dupes.found is defined and dupes.found > 1
+
+  - name: Insert correct line to /etc/audit/auditd.conf
+    lineinfile:
+      path: /etc/audit/auditd.conf
+      create: true
+      regexp: (?i)^\s*name_format\s*=\s*
+      line: name_format = hostname
+      state: present
+    when: '"audit" in ansible_facts.packages'
+
+  - name: Put contents into /etc/audit/rules.d/11-loginuid.rules according to policy
+    copy:
+      dest: /etc/audit/rules.d/11-loginuid.rules
+      content: |+
+        ## Make the loginuid immutable. This prevents tampering with the auid.
+        --loginuid-immutable
+      force: true
+
+  - name: Remove any permissions from other group
+    file:
+      path: /etc/audit/rules.d/11-loginuid.rules
+      mode: o-rwx
+
+  - name: reload audit rules 
+    command: "augenrules --load"
+    ignore_errors: yes 

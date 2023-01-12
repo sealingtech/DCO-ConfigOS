@@ -1,0 +1,41 @@
+- name: Windows 10 Test Book
+  hosts: '*'
+  tasks:
+    
+    - name: SV220747r569187 Reversible password encryption must be disabled
+      win_security_policy:
+        section: System Access
+        key: ClearTextPassword
+        value: "0"
+
+    - name: SV220743r569187 The maximum password age must be configured to 60 days or less.
+      win_security_policy:
+        section: System Access
+        key: MaximumPasswordAge
+        value: "60"
+
+    - name: SV220744r569187 The minimum password age must be configured to at least 1 day      
+      win_security_policy:
+        section: System Access
+        key: MinimumPasswordAge
+        value: 1
+
+    - name: SV220746r569187 The built-in Microsoft password complexity filter must be enabled
+      win_security_policy:
+        section: System Access
+        key: PasswordComplexity
+        value: 1
+
+    - name: SV220745r569187 Passwords must, at a minimum, be 14 characters
+      win_security_policy:
+        section: System Access
+        key: MinimumPasswordLength
+        value: 14 
+ 
+
+    - name: SV220742r569187 The password history must be configured to 24 passwords remembered
+      win_security_policy:
+        section: System Access
+        key: PasswordHistorySize
+        value: 24
+

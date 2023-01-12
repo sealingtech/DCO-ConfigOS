@@ -1,0 +1,160 @@
+---
+- name: Enforcing SUDOERS parameters 
+  hosts: "*"
+  become: yes
+  tasks:
+
+          #SV-237643r838720_rule
+    - name: XCCDF Value var_sudo_timestamp_timeout # promote to variable
+      set_fact:
+        var_sudo_timestamp_timeout: !!str 0
+
+    - name: Find out if /etc/sudoers.d/* files contain 'Defaults timestamp_timeout' be deduplicated
+      find:
+        path: /etc/sudoers.d
+        patterns: '*'
+        contains: ^[\s]*Defaults\s.*\btimestamp_timeout=.*
+      register: sudoers_d_defaults_timestamp_timeout
+
+    - name: Remove found occurrences of 'Defaults timestamp_timeout' from /etc/sudoers.d/* files
+      lineinfile:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*Defaults\s.*\btimestamp_timeout=.*
+        state: absent
+      with_items: '{{ sudoers_d_defaults_timestamp_timeout.files }}'
+
+    - name: Ensure timestamp_timeout is enabled with the appropriate value in /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        regexp: ^[\s]*Defaults\s(.*)\btimestamp_timeout=[-]?\w+\b(.*)$
+        line: Defaults \1timestamp_timeout={{ var_sudo_timestamp_timeout }}\2
+        validate: /usr/sbin/visudo -cf %s
+        backrefs: true
+      register: edit_sudoers_timestamp_timeout_option
+
+    - name: Enable timestamp_timeout option with appropriate value in /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        line: Defaults timestamp_timeout={{ var_sudo_timestamp_timeout }}
+        validate: /usr/sbin/visudo -cf %s
+      when: edit_sudoers_timestamp_timeout_option is defined and not edit_sudoers_timestamp_timeout_option.changed
+     
+#SV-237642r833369_rule
+    - name: Find out if /etc/sudoers.d/* files contain Defaults !targetpw to be deduplicated
+      find:
+        path: /etc/sudoers.d
+        patterns: '*'
+        contains: ^Defaults !targetpw$
+      register: sudoers_d_defaults
+ 
+    - name: Remove found occurrences of Defaults !targetpw from /etc/sudoers.d/* files
+      lineinfile:
+        path: '{{ item.path }}'
+        regexp: ^Defaults !targetpw$
+        state: absent
+      with_items: '{{ sudoers_d_defaults.files }}'
+              
+    - name: Find out if /etc/sudoers.d/* files contain Defaults !rootpw to be deduplicated
+      find:
+        path: /etc/sudoers.d
+        patterns: '*'
+        contains: ^Defaults !rootpw$
+      register: sudoers_d_defaults
+                                                                                                                                                                                                                                 
+    - name: Remove found occurrences of Defaults !rootpw from /etc/sudoers.d/* files 
+      lineinfile:
+        path: '{{ item.path }}'
+        regexp: ^Defaults !rootpw$
+        state: absent
+      with_items: '{{ sudoers_d_defaults.files }}'                                                                                                                                                                                                                                                                                                         
+    - name: Find out if /etc/sudoers.d/* files contain Defaults !runaspw to be deduplicated
+      find:
+        path: /etc/sudoers.d
+        patterns: '*'
+        contains: ^Defaults !runaspw$
+      register: sudoers_d_defaults                                                                                                                                                                                                                                                                                                                                                                                   
+    - name: Remove found occurrences of Defaults !runaspw from /etc/sudoers.d/* files
+      lineinfile:
+        path: '{{ item.path }}'
+        regexp: ^Defaults !runaspw$
+        state: absent
+      with_items: '{{ sudoers_d_defaults.files }}'
+
+    - name: Check for duplicate values
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !targetpw$
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: dupes
+    
+    - name: Deduplicate values from /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !targetpw$
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+
+    - name: Insert correct line into /etc/sudoers                                                
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !targetpw$
+        line: Defaults !targetpw
+        state: present            
+
+    - name: Check for duplicate values
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !rootpw$
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: dupes
+   
+    - name: Deduplicate values from /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !rootpw$
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+    
+    - name: Insert correct line into /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !rootpw$
+        line: Defaults !rootpw
+        state: present
+  
+    - name: Check for duplicate values
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !runaspw$
+        state: absent
+      check_mode: true 
+      changed_when: false
+      register: dupes
+   
+    - name: Deduplicate values from /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !runaspw$
+        state: absent
+      when: dupes.found is defined and dupes.found > 1
+    
+    - name: Insert correct line into /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        create: false
+        regexp: ^Defaults !runaspw$
+        line: Defaults !runaspw
+        state: present
+

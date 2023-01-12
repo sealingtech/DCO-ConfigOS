@@ -1,0 +1,65 @@
+- name: Windows 10 Test Book
+  hosts: '*'
+  tasks:
+
+   - name:  SV220956r569187 The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts.
+     win_user_right:
+       name: SeTrustedCredManAccessPrivilege
+       users: []
+
+
+   - name: SV220957r569187 The Access this computer from the network user right must only be assigned to the Administrators and Remote Desktop Users groups.
+     win_user_right:
+       name: SeNetworkLogonRight
+       action: set
+       users:
+         - Administrators
+         - Remote Desktop Users 
+           #         - Everyone
+           #         - Users
+
+   - name: SV220958r569187 The Act as part of the operating system user right must not be assigned to any groups or accounts
+     win_user_right:
+       name: SeTcbPrivilege
+       users: []
+       action: set
+
+   - name: SV220959r569187 The Allow log on locally user right must only be assigned to the Administrators and Users groups
+     win_user_right:
+      name: SeInteractiveLogonRight
+      action: set
+      users:
+          - Administrators
+          - Users
+    #      - Guest
+    #      - Users
+    #      - Backup Operators 
+
+
+   - name: SV220960r569187 Back up files and directories user right must only be assigned to the Administrators group
+     win_user_right:
+       name: SeBackupPrivilege
+       users: Administrators
+       action: set
+  
+   - name: SV220962r569187 The Create a pagefile user right must only be assigned to the Administrators group 
+     win_user_right:
+       name: SeCreatePagefilePrivilege
+       users: Administrators 
+       action: set
+
+   - name: SV220963r569187 The Create a token object user right must not be assigned to any groups or accounts
+     win_user_right:
+       name: SeCreateTokenPrivilege
+       users: []
+
+   - name: SV220964r569187 The Create global objects user right must only be assigned to Administrators, Service, Local Service, and Network Service
+     win_user_right:
+       name: SeCreateGlobalPrivilege 
+       action: set
+       users:
+         - Administrators
+         - LOCAL SERVICE
+         - NETWORK SERVICE
+         - SERVICE
+

@@ -1,0 +1,57 @@
+# RMF Configuration = Red Hat Enterprise Linux 8 Security Technical Implementation Guide :: Version 1, Release: 7 Benchmark Date: 27 Jul 2022
+
+V230266: kernel.kexec_load_disabled = 1
+
+V230267: fs.protected_symlinks = 1
+
+V230268: fs.protected_hardlinks = 1
+
+V230269: kernel.dmesg_restrict = 1
+
+V230270: kernel.perf_event_paranoid = 2
+
+V230280: kernel.randomize_va_space = 2
+
+V223031: kernel.core_pattern = |/bin/false
+
+V230545: kernel.unprivileged_bpf_disabled = 1
+
+V230546: kernel.yama.ptrace_scope = 1
+
+V230547: kernel.kptr_restrict = 1
+
+V230536: net.ipv4.conf.all.send_redirects = 0
+
+V230537: net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+V230543: net.ipv4.conf.default.send_redirects = 0
+
+V230549: net.ipv4.conf.all.rp_filter = 1
+
+V244550: net.ipv4.conf.default.accept_redirects = 0
+
+V244551: net.ipv4.conf.all.accept_source_route = 0
+
+V244552: net.ipv4.conf.default.accept_source_route = 0
+
+V244553: net.ipv4.conf.all.accept_redirects = 0
+
+V250317: net.ipv4.conf.all.forwarding = 0
+
+V230535: net.ipv6.conf.default.accept_redirects = 0
+
+V230538: net.ipv6.conf.all.accept_source_route = 0
+
+V230539: net.ipv6.conf.default.accept_source_route = 0
+
+V230540: net.ipv6.conf.all.forwarding = 0
+
+V230541: net.ipv6.conf.all.accept_ra = 0
+
+V230542: net.ipv6.conf.default.accept_ra = 0
+
+V230544: net.ipv6.conf.all.accept_redirects = 0
+
+V230548: user.max_user_namespaces = 0
+
+V244554: net.core.bpf_jit_harden = 2

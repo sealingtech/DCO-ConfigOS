@@ -1,0 +1,12 @@
+install:
+  - aide
+  - openscap
+  - scap-security-guide
+  - postfix
+  - opensc
+  - mailx
+
+remove:
+  - gssproxy
+  - iprutils
+  - tuned  

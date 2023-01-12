@@ -1,0 +1,23 @@
+---
+- name: lockdown ESXI7
+  hosts: "*"
+  become: no
+  gather_facts: no
+  tasks:
+
+    - name: Configure ESXI vswitch 
+      community.vmware.vmware_vswitch:
+        hostname: "{{ esxi_hostname }}"
+        username: "{{ esxi_username }}"
+        password: "{{ esxi_password }}"
+        esxi_hostname: localhost
+        switch_name: vSwitch0
+        nic_name: vmnic0
+        validate_certs: no
+        security:
+          forged_transmits: false
+          mac_changes: false
+          promiscuous_mode: false
+      delegate_to: localhost
+ 
+

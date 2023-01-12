@@ -1,0 +1,20 @@
+---
+- name: lockdown ESXI7
+  hosts: "*"
+  become: no
+  gather_facts: no
+  tasks:
+
+    - name: Configure ESXI services
+      community.vmware.vmware_host_service_manager:
+        hostname: "{{ esxi_hostname }}"
+        username: "{{ esxi_username }}"
+        password: "{{ esxi_password }}"
+        esxi_hostname: localhost
+        validate_certs: no
+        service_name: TSM
+        state: absent
+        service_policy: off
+      delegate_to: localhost
+
+

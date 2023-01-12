@@ -1,0 +1,138 @@
+# R-77197 PANW-NM-000016
+panosSTIG_stigrule_77197_Manage: True
+panosSTIG_stigrule_77197_login_banner_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/system'
+panosSTIG_stigrule_77197_login_banner_Element: '<login-banner>You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
+
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:
+
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
+
+-At any time, the USG may inspect and seize data stored on this IS.
+
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
+
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
+
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.
+
+</login-banner>'
+# R-77213 PANW-NM-000053
+panosSTIG_stigrule_77213_Manage: True
+panosSTIG_stigrule_77213_password_minimum_length_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77213_password_minimum_length_Element: '<enabled>yes</enabled>
+
+<minimum-length>15</minimum-length>'
+# R-77215 PANW-NM-000054
+panosSTIG_stigrule_77215_Manage: True
+panosSTIG_stigrule_77215_password_password_history_count_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77215_password_password_history_count_Element: '<enabled>yes</enabled>
+
+<password-history-count>5</password-history-count>'
+# R-77217 PANW-NM-000055
+panosSTIG_stigrule_77217_Manage: True
+panosSTIG_stigrule_77217_password_minimum_uppercase_letters_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77217_password_minimum_uppercase_letters_Element: '<enabled>yes</enabled>
+
+<minimum-uppercase-letters>1</minimum-uppercase-letters>'
+# R-77219 PANW-NM-000056
+panosSTIG_stigrule_77219_Manage: True
+panosSTIG_stigrule_77219_password_minimum_lowercase_letters_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77219_password_minimum_lowercase_letters_Element: '<enabled>yes</enabled>
+
+<minimum-lowercase-letters>1</minimum-lowercase-letters>'
+# R-77221 PANW-NM-000057
+panosSTIG_stigrule_77221_Manage: True
+panosSTIG_stigrule_77221_password_minimum_numeric_letters_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77221_password_minimum_numeric_letters_Element: '<enabled>yes</enabled>
+
+<minimum-numeric-letters>1</minimum-numeric-letters>'
+# R-77223 PANW-NM-000058
+panosSTIG_stigrule_77223_Manage: True
+panosSTIG_stigrule_77223_password_minimum_special_characters_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77223_password_minimum_special_characters_Element: '<enabled>yes</enabled>
+
+<minimum-special-characters>1</minimum-special-characters>'
+# R-77225 PANW-NM-000059
+panosSTIG_stigrule_77225_Manage: True
+panosSTIG_stigrule_77225_password_new_password_differs_by_characters_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77225_password_new_password_differs_by_characters_Element: '<enabled>yes</enabled>
+
+<new-password-differs-by-characters>8</new-password-differs-by-characters>'
+# R-77227 PANW-NM-000061
+panosSTIG_stigrule_77227_Manage: True
+panosSTIG_stigrule_77227_disable_http_disable_telnet_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/system'
+panosSTIG_stigrule_77227_disable_http_disable_telnet_Element: '<service>
+
+<disable-http>yes</disable-http>
+
+<disable-telnet>yes</disable-telnet>
+
+</service>'
+# R-77229 PANW-NM-000062
+panosSTIG_stigrule_77229_Manage: True
+panosSTIG_stigrule_77229_password_password_change_period_block_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77229_password_password_change_period_block_Element: '<enabled>yes</enabled>
+
+<password-change-period-block>1</password-change-period-block>'
+# R-77231 PANW-NM-000063
+panosSTIG_stigrule_77231_Manage: True
+panosSTIG_stigrule_77231_password_expiration_period_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77231_password_expiration_period_Element: '<enabled>yes</enabled>
+
+<password-change>
+
+<expiration-period>60</expiration-period>
+
+</password-change>'
+# R-77233 PANW-NM-000069
+panosSTIG_stigrule_77233_Manage: True
+panosSTIG_stigrule_77233_idle_timeout_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/setting/management'
+panosSTIG_stigrule_77233_idle_timeout_Element: '<idle-timeout>10</idle-timeout>'
+# R-77239 PANW-NM-000096
+# Alarm generation is enabled in 77241
+panosSTIG_stigrule_77239_Manage: True
+panosSTIG_stigrule_77239_log_databases_alarm_threshold_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/setting/management'
+panosSTIG_stigrule_77239_log_databases_alarm_threshold_Element: '<common-criteria-alarm-generation>
+
+<log-databases-alarm-threshold>
+
+<traffic>75</traffic>
+
+<threat>75</threat>
+
+<config>75</config>
+
+<system>75</system>
+
+<alarm>75</alarm>
+
+<hipmatch>75</hipmatch>
+
+</log-databases-alarm-threshold>
+
+</common-criteria-alarm-generation>'
+# R-77241 PANW-NM-000097
+panosSTIG_stigrule_77241_Manage: True
+panosSTIG_stigrule_77241_enable_alarm_generation_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/setting/management'
+panosSTIG_stigrule_77241_enable_alarm_generation_Element: '<common-criteria-alarm-generation>
+
+<enable-alarm-generation>yes</enable-alarm-generation>
+
+</common-criteria-alarm-generation>'
+# R-77249 PANW-NM-000101
+panosSTIG_stigrule_77249_Manage: True
+panosSTIG_stigrule_77249_timezone_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/system'
+panosSTIG_stigrule_77249_timezone_Element: '<timezone>GMT</timezone>'
+# R-77253 PANW-NM-000114
+panosSTIG_stigrule_77253_Manage: True
+panosSTIG_stigrule_77253_password_password_change_on_first_login_Xpath: '/config/mgt-config/password-complexity'
+panosSTIG_stigrule_77253_password_password_change_on_first_login_Element: '<enabled>yes</enabled>
+
+<password-change-on-first-login>yes</password-change-on-first-login>'
+# R-77255 PANW-NM-000117
+# duplicate of 77227
+# R-77273 PANW-NM-000144
+panosSTIG_stigrule_77273_Manage: True
+panosSTIG_stigrule_77273_enable_log_high_dp_load_Xpath: '/config/devices/entry[@name="localhost.localdomain"]/deviceconfig/setting/management'
+panosSTIG_stigrule_77273_enable_log_high_dp_load_Element: '<enable-log-high-dp-load>yes</enable-log-high-dp-load>'
+panosSTIG_save_configuration_Manage: False

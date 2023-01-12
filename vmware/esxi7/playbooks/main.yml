@@ -1,0 +1,20 @@
+---
+  - import_playbook: 00-advanced_options.yml
+    tags:
+      - "00"
+
+  - import_playbook: 01-sshd.yml
+    tags:
+      - "01"
+
+  - import_playbook: 02-services.yml
+    tags:
+      - "02"
+
+  - import_playbook: 03-vSwitch.yml
+    tags: 
+      - "03"
+
+        #  - import_playbook: 04-firewall.yml
+        #    tags: 
+        #      - "04"

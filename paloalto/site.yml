@@ -1,0 +1,9 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - paloaltonetworks.panos
+  vars_files:
+    - panosSTIG.yml
+  roles:
+    - panosSTIG

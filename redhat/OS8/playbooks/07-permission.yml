@@ -1,0 +1,170 @@
+- name: Setting User Enviroment and Permissions 
+  hosts: "*"
+  become: yes
+  tasks:
+ 
+   - name: XCCDF Value var_accounts_user_umask # promote to variable
+     set_fact:
+       var_accounts_user_umask: !!str 077
+       var_account_disable_post_pw_expiration: !!str 35
+       var_accounts_fail_delay: !!str 4
+       var_accounts_max_concurrent_login_sessions: !!str 10
+
+   - name: Replace user umask in /etc/csh.cshrc
+     replace:
+       path: /etc/csh.cshrc
+       regexp: umask.*
+       replace: umask {{ var_accounts_user_umask }}
+     register: umask_replace
+
+   - name: Append user umask in /etc/csh.cshrc
+     lineinfile:
+       create: true
+       path: /etc/csh.cshrc
+       line: umask {{ var_accounts_user_umask }}
+     when: umask_replace is not changed
+
+   - name: Check if umask is already set
+     lineinfile:
+       path: /etc/profile
+       regexp: (^[\s]*[^#]umask)\s+(\d+)
+       state: absent
+     check_mode: true
+     changed_when: false
+     register: result_umask_is_set
+
+   - name: Replace user umask in /etc/profile
+     replace:
+       path: /etc/profile
+       regexp: ^(\s*)umask\s+\d+
+       replace: \1umask {{ var_accounts_user_umask }}
+
+   - name: Append user umask in /etc/profile
+     lineinfile:
+       create: true
+       path: /etc/profile
+       line: umask {{ var_accounts_user_umask }}
+     when: result_umask_is_set.found == 0
+   
+   - name: Replace user umask in /etc/bashrc
+     replace:
+       path: /etc/bashrc
+       regexp: umask.*
+       replace: umask {{ var_accounts_user_umask }}
+     register: umask_replace
+
+   - name: Append user umask in /etc/bashrc
+     lineinfile:
+       create: true
+       path: /etc/bashrc
+       line: umask {{ var_accounts_user_umask }}
+     when: umask_replace is not changed
+
+   - name: Ensure the Default UMASK is Set Correctly
+     replace:
+       path: /etc/login.defs
+       regexp: ^UMASK
+       replace: UMASK {{ var_accounts_user_umask }}
+     register: umask_replace
+
+   - name: Ensure the Default UMASK is Appended Correctly
+     lineinfile:
+       create: true
+       path: /etc/login.defs
+       line: UMASK {{ var_accounts_user_umask }}
+     when:
+       - umask_replace is not changed
+
+
+   - name: Set accounts logon fail delay
+     lineinfile:
+       dest: /etc/login.defs
+       regexp: ^FAIL_DELAY
+       line: FAIL_DELAY {{ var_accounts_fail_delay }}
+       create: true
+
+   - name: Find /etc/security/limits.d files containing maxlogins configuration
+     find:
+       paths: /etc/security/limits.d
+       contains: ^[\s]*\*[\s]+(?:(?:hard)|(?:-))[\s]+maxlogins
+       patterns: '*.conf'
+     register: maxlogins
+ 
+   - name: Limit the Number of Concurrent Login Sessions Allowed Per User in files from limits.d
+     replace:
+       dest: '{{ item.path }}'
+       regexp: ^#?\*.*maxlogins.*
+       replace: '*          hard    maxlogins     {{ var_accounts_max_concurrent_login_sessions }}'
+     with_items:
+       - '{{ maxlogins.files }}'
+
+   - name: Limit the Number of Concurrent Login Sessions Allowed Per User
+     lineinfile:
+       state: present
+       dest: /etc/security/limits.conf
+       insertbefore: ^# End of file
+       regexp: ^#?\*.*maxlogins
+       line: '*          hard    maxlogins        {{ var_accounts_max_concurrent_login_sessions }}'
+       create: true
+     when:
+       - maxlogins.matched == 0
+
+   - name: Ensure interactive local users are the owners of their respective initialization files
+     shell:
+       cmd: |-
+         for dir in $(awk -F':' '{ if ($3 >= 1000 && $3 != 65534) print $6}' /etc/passwd); do
+           for file in $(find $dir -maxdepth 1 -type f -name ".*"); do
+             sed -i 's/^\([\s]*umask\s*\)/#\1/g' $file
+           done
+         done
+    
+   - name: Get all local users from /etc/passwd
+     getent:
+       database: passwd
+       split: ':'
+
+   - name: Create local_users variable from the getent output
+     set_fact:
+       local_users: '{{ ansible_facts.getent_passwd|dict2items }}'
+
+   - name: Test for existence home directories to avoid creating them.
+     stat:
+       path: '{{ item.value[4] }}'
+     register: path_exists
+     loop: '{{ local_users }}'
+     when:
+       - item.value[1]|int >= 1000
+       - item.value[1]|int != 65534
+  
+   - name: Test for existence home directories to avoid creating them, but only fixing  ownership
+     stat:
+       path: '{{ item.value[4] }}'
+     register: gpath_exists
+     loop: '{{ local_users }}'
+     when:
+       - item.value[2]|int >= 1000
+       - item.value[2]|int != 65534
+   
+   - name: Ensure interactive local users are the owners of their respective home directories
+     file:
+       path: '{{ item.0.value[4] }}'
+       group: '{{ item.0.value[2] }}'
+       recurse: true
+     loop: '{{ local_users|zip(gpath_exists.results)|list }}'
+     when: item.1.stat is defined and item.1.stat.exists
+   
+   - name: Ensure interactive local users have proper permissions on their respective home directories
+     file:
+       path: '{{ item.0.value[4] }}'
+       mode: u-s,g-w-s,o=-
+       follow: false
+       recurse: true
+     loop: '{{ local_users|zip(path_exists.results)|list }}'
+     when: item.1.stat is defined and item.1.stat.exists
+
+   - name: Set Account Expiration Following Inactivity
+     lineinfile:
+       create: true
+       dest: /etc/default/useradd
+       regexp: ^INACTIVE
+       line: INACTIVE={{ var_account_disable_post_pw_expiration }}  

@@ -1,0 +1,311 @@
+---
+- name: Configuring kernel parameters and enforcing sysctl
+  hosts: "*"
+  become: yes
+  tasks:
+
+    - name: List /etc/sysctl.d/*.conf files
+      find:
+        paths:
+        - /etc/sysctl.d/
+        - /run/sysctl.d/
+        contains: 
+        - ^[\s]*kernel.dmesg_restrict.*$
+        - ^[\s]*user.max_user_namespaces.*$
+        - ^[\s]*net.core.bpf_jit_harden.*$
+        - ^[\s]*kernel.yama.ptrace_scope.*$
+        - ^[\s]*kernel.unprivileged_bpf_disabled.*$
+        - ^[\s]*kernel.perf_event_paranoid.*$
+        - ^[\s]*kernel.kexec_load_disabled.*$
+        - ^[\s]*kernel.core_pattern.*$
+        - ^[\s]*kernel.randomize_va_space.*$
+        - ^[\s]*net.ipv4.conf.default.send_redirects.*$
+        - ^[\s]*net.ipv4.conf.all.send_redirects.*$
+        - ^[\s]*net.ipv4.icmp_echo_ignore_broadcasts.*$
+        - ^[\s]*net.ipv4.conf.default.accept_source_route*$
+        - ^[\s]*net.ipv4.conf.all.rp_filter.*$
+        - ^[\s]*net.ipv4.conf.all.forwarding.*$
+        - ^[\s]*net.ipv4.conf.all.accept_source_route.*$
+        - ^[\s]*net.ipv4.conf.all.accept_redirects.*$
+        - ^[\s]*net.ipv6.conf.default.accept_source_route.*$
+        - ^[\s]*net.ipv6.conf.default.accept_redirects.*$
+        - ^[\s]*net.ipv6.conf.all.forwarding.*$
+        - ^[\s]*fs.protected_hardlinks.*$
+        - ^[\s]*fs.protected_symlinks.*$
+        - ^[\s]*net.ipv6.conf.all.accept_ra.*$
+        - ^[\s]*net.ipv6.conf.all.accept_redirects.*$
+        - ^[\s]*net.ipv6.conf.all.accept_source_route.*$
+        - ^[\s]*net.ipv6.conf.default.accept_ra.*$
+        - ^[\s]*net.ipv4.conf.all.accept_source_route
+        patterns: '*.conf'
+        file_type: any
+      register: find_sysctl_d
+
+    - name: Comment out any occurrences of kernel dmesg restrict from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.dmesg_restrict.*$
+        replace: '#^[\s]*kernel.dmesg_restrict.*$'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of user.max_user_namespaces from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*user.max_user_namespaces
+        replace: '#user.max_user_namespaces'
+      loop: '{{ find_sysctl_d.files }}'
+
+
+    - name: Comment out any occurrences of net.core.bpf_jit_harden from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'                    
+        regexp: ^[\s]*net.core.bpf_jit_harden
+        replace: '#net.core.bpf_jit_harden'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of kernel.yama.ptrace_scope from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.yama.ptrace_scope
+        replace: '#kernel.yama.ptrace_scope'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of kernel.unprivileged_bpf_disabled from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.unprivileged_bpf_disabled
+        replace: '#kernel.unprivileged_bpf_disabled'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of kernel.perf_event_paranoid from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.perf_event_paranoid.*$
+        replace: '#kernel.perf_event_paranoid'
+      loop: '{{ find_sysctl_d.files }}'
+ 
+    - name: Comment out any occurrences of kernel.kexec_load_disabled from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.kexec_load_disabled.*$
+        replace: '#kernel.kexec_load_disabled'
+      loop: '{{ find_sysctl_d.files }}'
+ 
+    - name: Comment out any occurrences of kernel.core_pattern from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.core_pattern.*$
+        replace: '#kernel.core_pattern'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of kernel.randomize_va_space from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.randomize_va_space.*$
+        replace: '#kernel.randomize_va_space'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of kernel.randomize_va_space from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.randomize_va_space
+        replace: '#kernel.randomize_va_space'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of kernel.kptr_restricn from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*kernel.kptr_restrict.*$
+        replace: '#kernel.kptr_restrict'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of net.ipv4.conf.default.send_redirects from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.default.send_redirects.*$
+        replace: '#net.ipv4.conf.default.send_redirects'
+      loop: '{{ find_sysctl_d.files }}'
+    - name: Comment out any occurrences of net.ipv4.conf.all.send_redirects from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.all.send_redirects.*$
+        replace: '#net.ipv4.conf.all.send_redirects'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.icmp_echo_ignore_broadcasts from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.icmp_echo_ignore_broadcasts.*$
+        replace: '#net.ipv4.icmp_echo_ignore_broadcasts'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.conf.default.accept_source_route from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.default.accept_source_route.*$
+        replace: '#net.ipv4.conf.default.accept_source_route'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.conf.default.accept_redirects from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.default.accept_redirects.*$
+        replace: '#net.ipv4.conf.default.accept_redirects'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.conf.all.rp_filter from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.all.rp_filter.*$
+        replace: '#net.ipv4.conf.all.rp_filter'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.conf.all.forwarding from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.all.forwarding.*$
+        replace: '#net.ipv4.conf.all.forwarding'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.conf.all.accept_source_route from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.all.accept_source_route.*$
+        replace: '#net.ipv4.conf.all.accept_source_route'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv4.conf.all.accept_redirects from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.all.accept_redirects.*$
+        replace: '#net.ipv4.conf.all.accept_redirects'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.default.accept_source_route from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.default.accept_source_route.*$
+        replace: '#net.ipv6.conf.default.accept_source_route'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.default.accept_redirects from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.default.accept_redirects.*$
+        replace: '#net.ipv6.conf.default.accept_redirects'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.all.forwarding from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.all.forwarding.*$
+        replace: '#net.ipv6.conf.all.forwarding'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Enable Kernel Parameter to Enforce DAC on Hardlinks
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*fs.protected_hardlinks.*$
+        replace: '#fs.protected_hardlinks'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.all.forwarding from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*fs.protected_symlinks.*$
+        replace: '#fs.protected_symlinks'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.all.accept_ra from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.all.accept_ra
+        replace: '#net.ipv6.conf.all.accept_ra'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.all.accept_redirects from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.all.accept_redirects
+        replace: '#net.ipv6.conf.all.accept_redirects'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.all.accept_source_route from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.all.accept_source_route
+        replace: '#net.ipv6.conf.all.accept_source_route'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Comment out any occurrences of net.ipv6.conf.default.accept_ra from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv6.conf.default.accept_ra
+        replace: '#net.ipv6.conf.default.accept_ra'
+      loop: '{{ find_sysctl_d.files }}'
+    
+    - name: Comment out any occurrences of net.ipv4.conf.all.accept_source_route from /etc/sysctl.d/*.conf files
+      replace:
+        path: '{{ item.path }}'
+        regexp: ^[\s]*net.ipv4.conf.all.accept_source_route
+        replace: '#net.ipv4.conf.all.accept_source_route'
+      loop: '{{ find_sysctl_d.files }}'
+
+    - name: Ensure sysctl kernel.dmesg_restrict is set to 1
+      sysctl:
+        name: '{{ item }}'
+        value: '1'
+        state: present
+        reload: true
+      with_items:
+        - kernel.dmesg_restrict
+        - kernel.yama.ptrace_scope
+        - kernel.unprivileged_bpf_disabled
+        - kernel.kexec_load_disabled
+        - kernel.core_pattern
+        - kernel.kptr_restrict
+        - net.ipv4.icmp_echo_ignore_broadcasts
+        - net.ipv4.conf.all.rp_filter  
+        - fs.protected_hardlinks
+        - fs.protected_symlinks
+
+    - name: Ensure sysctl user.max_user_namespaces is set to 0
+      sysctl:
+        name: '{{ item }}'
+        value: '0'
+        state: present
+        reload: true
+      with_items:
+        - user.max_user_namespaces
+        - net.ipv4.conf.default.send_redirects
+        - net.ipv4.conf.all.send_redirects
+        - net.ipv4.conf.default.accept_source_route
+        - net.ipv4.conf.default.accept_redirects
+        - net.ipv4.conf.all.forwarding
+        - net.ipv4.conf.all.accept_source_route
+        - net.ipv4.conf.all.accept_redirects
+        - net.ipv6.conf.default.accept_source_route
+        - net.ipv6.conf.default.accept_redirects
+        - net.ipv6.conf.all.forwarding
+        - net.ipv6.conf.all.accept_ra
+        - net.ipv6.conf.all.accept_redirects
+        - net.ipv6.conf.all.accept_source_route
+        - net.ipv6.conf.default.accept_ra
+        - net.ipv4.conf.all.accept_source_route
+    - name: Ensure sysctl net.core.bpf_jit_harden is set to 2
+      sysctl:
+        name: '{{ item }}'
+        value: '2'
+        state: present
+        reload: true
+      with_items:
+        - kernel.perf_event_paranoid
+        - net.core.bpf_jit_harden
+        - kernel.randomize_va_space
+    
+    - name: Ensure sysctl kernel.core_pattern is set to |/bin/false
+      sysctl:
+        name: kernel.core_pattern
+        value: '|/bin/false'
+        state: present
+        reload: true

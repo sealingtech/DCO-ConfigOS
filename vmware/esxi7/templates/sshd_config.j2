@@ -1,0 +1,74 @@
+# Version 7.0.2.1
+
+# running from inetd
+# Port 22
+#
+HostKey {{HostKey[0]}}
+HostKey {{HostKey[1]}}
+
+
+# Fips mode restricts ciphers to only FIPS-permitted ciphers
+FipsMode {{FipsMode}}
+
+# vPP FCS_SSH_EXT.1.7: rekey after 1GB, 1H (instead of default 4GB for AES)
+RekeyLimit {{RekeyLimit}}
+
+SyslogFacility {{SyslogFacility}}
+LogLevel {{LogLevel}}
+
+PermitRootLogin {{PermitRootLogin}}
+
+PrintMotd {{PrintMotd}}
+
+TCPKeepAlive {{TCPKeepAlive}}
+
+# Key algorithms used in SSHv2 handshake
+# (ed25519 not allowed by current FIPS module)
+KexAlgorithms {{KexAlgorithms}}
+HostKeyAlgorithms {{HostKeyAlgorithms}}
+Ciphers {{Ciphers}} 
+MACs {{MACs}}
+
+UsePAM {{UsePAM}}
+# only use PAM challenge-response (keyboard-interactive)
+PasswordAuthentication {{PasswordAuthentication}}
+
+Subsystem {{Subsystem}}
+
+AuthorizedKeysFile {{AuthorizedKeysFile}}
+
+# Timeout value of 10 mins. The default value of ClientAliveCountMax is 3.
+# Hence, we get a  3 * 200 = 600 seconds timeout if the client has been
+# unresponsive.
+ClientAliveCountMax {{ClientAliveCountMax}}
+ClientAliveInterval {{ClientAliveInterval}}
+
+# sshd(8) will refuse connection attempts with a probability of "rate/100"
+# (30%) if there are currently "start" (10) unauthenticated connections.  The
+# probability increases linearly and all connection attempts are refused if the
+# number of unauthenticated connections reaches "full" (100)
+MaxStartups {{MaxStartups}}
+
+# ESXi is not a proxy server
+AllowTcpForwarding {{AllowTcpForwarding}} 
+AllowStreamLocalForwarding {{AllowStreamLocalForwarding}}
+
+# The following settings are all default values. They are repeated
+# here to simplify auditing settings (for example, DoD STIG).
+IgnoreRhosts {{IgnoreRhosts}}
+HostbasedAuthentication {{HostbasedAuthentication}}
+PermitEmptyPasswords {{PermitEmptyPasswords}}
+PermitUserEnvironment {{PermitUserEnvironment}}
+StrictModes {{StrictModes}} 
+Compression {{Compression}}
+GatewayPorts {{GatewayPorts}}
+X11Forwarding {{X11Forwarding}}
+{{AcceptEnv}} 
+PermitTunnel {{PermitTunnel}}
+MaxSessions {{MaxSessions}}
+# The following settings are disabled during the OpenSSH build.
+# They are commented out to avoid spurious warnings in log files.
+GSSAPIAuthentication {{GSSAPIAuthentication}}
+KerberosAuthentication {{KerberosAuthentication}}
+
+Banner {{Banner}}

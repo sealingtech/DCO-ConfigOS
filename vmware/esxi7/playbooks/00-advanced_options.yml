@@ -1,0 +1,33 @@
+---
+- name: lockdown ESXI7
+  hosts: "*"
+  become: no
+  gather_facts: no
+  tasks:
+
+    - name: Set Advanced Options
+      community.vmware.vmware_host_config_manager:
+        hostname: "{{ esxi_hostname }}"
+        username: "{{ esxi_username }}"
+        password: "{{ esxi_password }}"
+        esxi_hostname: localhost
+        validate_certs: no
+        options:
+          "UserVars.ESXiShellInteractiveTimeOut": 120 #239296
+          "UserVars.ESXiShellTimeOut": 600 #V-239297
+          "UserVars.DcuiTimeOut": 120 #V-239298
+          "UserVars.SuppressShellWarning": 0 #V-239329
+          "Security.AccountLockFailures": 3 #V-239262
+          "Security.AccountUnlockTime": 900 #V-239263
+          "Security.PasswordHistory": 5 #V-239287
+          "Security.PasswordQualityControl": "similar=deny retry=3 min=disabled,disabled,disabled,disabled,15" #V-23928
+          "DCUI.Access": "root" #V-239259
+          "Net.BlockGuestBPDU": 1 #V-239312
+          "Config.HostAgent.plugins.solo.enableMob": false
+          "UserVars.ESXiVPsDisabledProtocols": tlsv1,tlsv1.1,sslv3
+          "Config.HostAgent.log.level": info
+          "Mem.ShareForceSalting": 2 #V-239309
+          "Net.DVFilterBindIpAddress": ""
+          #          "Syslog.global.logHost": udp://10.13.37.111:514 ### example for when yu ahve a log server ####
+      delegate_to: localhost
+

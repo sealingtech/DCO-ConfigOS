@@ -1,0 +1,176 @@
+# RMF Configuration = Red Hat Enterprise Linux 8 Security Technical Implementation Guide ::   Version 1, Release: 7 Benchmark Date: 27 Jul 2022
+
+
+V230466: -w /var/log/faillock -p wa -k logins
+
+V230467: -w /var/log/lastlog -p wa -k logins
+
+V230409: -w /etc/sudoers -p wa -k identity
+
+V230410: -w /etc/sudoers.d/ -p wa -k identity
+
+V230404: -w /etc/shadow -p wa -k identity
+
+V230405: -w /etc/security/opasswd -p wa -k identity
+
+V230406: -w /etc/passwd -p wa -k identity
+
+V230407: -w /etc/gshadow -p wa -k identity
+
+V230408: -w /etc/group -p wa -k identity
+
+V230386: 
+  - -a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid 
+  - -a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid 
+  - -a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid  
+  - -a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid 
+
+V230402: -e 2
+
+V230403: --loginuid-immutable
+
+V230412: -a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-priv_change
+
+V230413:
+  - -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod 
+  - -a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod 
+  - -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod 
+  - -a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod 
+
+V230418: -a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage
+
+V230419: -a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod
+
+V230421: -a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh
+
+V230422: -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd
+
+V230423: -a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
+
+V230424: -a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
+
+V230425:
+  - -a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount 
+  - -a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount 
+
+V230426: -a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230427: -a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230428: -a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230429: -a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230430: -a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230431: -a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230432: -a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230433: -a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+
+V230434: -a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh
+
+V230435: -a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod
+
+V230436: -a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check
+
+V230437: -a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+
+V230438:
+  - -a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng
+  - -a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng
+
+V230439:
+  - -a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete
+  - -a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete
+
+V230444: -a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd
+
+V230446:
+  - -a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng 
+  - -a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng 
+
+V230447: -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab
+
+V230448: -a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+
+V230449:
+  - -a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access 
+  - -a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access 
+  - -a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access 
+  - -a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access 
+
+V230455: 
+  - -a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod 
+  - -a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod 
+
+V230456:
+  - -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod 
+  - -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod 
+
+V230462: -a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+
+V230463: -a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod
+
+V230464: -a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod
+
+V230465: -a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k modules
+
+sshagent: -a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent
+
+unix_update: -a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
+kmod: -w /usr/bin/kmod -p x -k modules
+
+chage: -a always,exit -F path=/usr/bin/chage -F auid>=1000 -F auid!=unset -F key=privileged
+
+setfacl: -a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
+chsh: -a always,exit -F path=/usr/bin/chsh -F auid>=1000 -F auid!=unset -F key=privileged
+
+crontab: -a always,exit -F path=/usr/bin/crontab -F auid>=1000 -F auid!=unset -F key=privileged
+
+gpasswd: -a always,exit -F path=/usr/bin/gpasswd -F auid>=1000 -F auid!=unset -F key=privileged
+
+mount: -a always,exit -F path=/usr/bin/mount -F auid>=1000 -F auid!=unset -F key=privileged
+
+newgrp: -a always,exit -F path=/usr/bin/newgrp -F auid>=1000 -F auid!=unset -F key=privileged
+
+pam_timestamp_check:
+  - -a always,exit -F path=/usr/sbin/pam_timestamp_check
+  - -F auid>=1000 -F auid!=unset -F key=privileged
+
+passwd: -a always,exit -F path=/usr/bin/passwd -F auid>=1000 -F auid!=unset -F key=privileged
+
+postdrop: -a always,exit -F path=/usr/sbin/postdrop -F auid>=1000 -F auid!=unset -F key=privileged
+
+postqueue: -a always,exit -F path=/usr/sbin/postqueue -F auid>=1000 -F auid!=unset -F key=privileged
+
+sshkeysign: -a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid>=1000 -F auid!=unset -F key=privileged
+
+su: -a always,exit -F path=/usr/bin/su -F auid>=1000 -F auid!=unset -F key=privileged
+
+sudo: -a always,exit -F path=/usr/bin/sudo -F auid>=1000 -F auid!=unset -F key=privileged
+
+umount: -a always,exit -F path=/usr/bin/umount -F auid>=1000 -F auid!=unset -F key=privileged
+
+unix_checkpwd: -a always,exit -F path=/usr/sbin/unix_chkpwd -F auid>=1000 -F auid!=unset -F key=privileged
+
+userhelper: -a always,exit -F path=/usr/sbin/userhelper -F auid>=1000 -F auid!=unset -F key=privileged
+
+chcon: -a always,exit -F path=/usr/bin/chcon -F auid>=1000 -F auid!=unset -F key=privileged
+
+semanage: -a always,exit -F path=/usr/sbin/semanage -F auid>=1000 -F auid!=unset -F key=privileged
+
+setfiles: -a always,exit -F path=/usr/sbin/setfiles -F auid>=1000 -F auid!=unset -F key=privileged
+
+setsebool: -a always,exit -F path=/usr/sbin/setsebool -F auid>=1000 -F auid!=unset -F key=privileged
+
+sshagent: -a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent
+
+chacl: -a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
+usermod: -a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
+

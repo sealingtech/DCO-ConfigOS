@@ -1,0 +1,28 @@
+- name: Windows 10 Test Book
+  hosts: '*'
+  tasks:
+
+    
+    - name: SV220913r569187 Audit policy using subcategories must be enabled
+      win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Control\Lsa
+        value: SCENoApplyLegacyAuditPolicy
+        data: 1
+        type: dword     
+
+
+          
+    - name:  The system must be configured to audit Account Management - Security Group Management successes.
+      win_audit_policy_system:
+        subcategory: Security Group Management
+        audit_type: success 
+    
+    - name: SV220748r569187 Enable all auditing types for the category Account logon events
+      win_audit_policy_system:
+        subcategory: Credential Validation
+        audit_type: success, failure
+
+    - name: Enable all auditing types for the category "Account logon events"
+      win_audit_policy_system:
+        category: Account logon
+        audit_type: success, failure

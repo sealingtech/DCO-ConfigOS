@@ -1,0 +1,137 @@
+# R-77197 PANW-NM-000016
+- name : stigrule_77197_login_banner
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77197_login_banner_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77197_login_banner_Element }}"
+  when: panosSTIG_stigrule_77197_Manage
+# R-77213 PANW-NM-000053
+- name : stigrule_77213_password_minimum_length
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77213_password_minimum_length_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77213_password_minimum_length_Element }}"
+  when: panosSTIG_stigrule_77213_Manage
+# R-77215 PANW-NM-000054
+- name : stigrule_77215_password_password_history_count
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77215_password_password_history_count_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77215_password_password_history_count_Element }}"
+  when: panosSTIG_stigrule_77215_Manage
+# R-77217 PANW-NM-000055
+- name : stigrule_77217_password_minimum_uppercase_letters
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77217_password_minimum_uppercase_letters_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77217_password_minimum_uppercase_letters_Element }}"
+  when: panosSTIG_stigrule_77217_Manage
+# R-77219 PANW-NM-000056
+- name : stigrule_77219_password_minimum_lowercase_letters
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77219_password_minimum_lowercase_letters_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77219_password_minimum_lowercase_letters_Element }}"
+  when: panosSTIG_stigrule_77219_Manage
+# R-77221 PANW-NM-000057
+- name : stigrule_77221_password_minimum_numeric_letters
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77221_password_minimum_numeric_letters_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77221_password_minimum_numeric_letters_Element }}"
+  when: panosSTIG_stigrule_77221_Manage
+# R-77223 PANW-NM-000058
+- name : stigrule_77223_password_minimum_special_characters
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77223_password_minimum_special_characters_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77223_password_minimum_special_characters_Element }}"
+  when: panosSTIG_stigrule_77223_Manage
+# R-77225 PANW-NM-000059
+- name : stigrule_77225_password_new_password_differs_by_characters
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77225_password_new_password_differs_by_characters_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77225_password_new_password_differs_by_characters_Element }}"
+  when: panosSTIG_stigrule_77225_Manage
+# R-77227 PANW-NM-000061
+- name : stigrule_77227_disable_http_disable_telnet
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77227_disable_http_disable_telnet_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77227_disable_http_disable_telnet_Element }}"
+  when: panosSTIG_stigrule_77227_Manage
+# R-77229 PANW-NM-000062
+- name : stigrule_77229_password_password_change_period_block
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77229_password_password_change_period_block_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77229_password_password_change_period_block_Element }}"
+  when: panosSTIG_stigrule_77229_Manage
+# R-77231 PANW-NM-000063
+- name : stigrule_77231_password_expiration_period
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77231_password_expiration_period_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77231_password_expiration_period_Element }}"
+  when: panosSTIG_stigrule_77231_Manage
+# R-77233 PANW-NM-000069
+- name : stigrule_77233_idle_timeout
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77233_idle_timeout_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77233_idle_timeout_Element }}"
+  when: panosSTIG_stigrule_77233_Manage
+# R-77239 PANW-NM-000096
+# Alarm generation is enabled in 77241
+- name : stigrule_77239_log_databases_alarm_threshold
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77239_log_databases_alarm_threshold_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77239_log_databases_alarm_threshold_Element }}"
+  when: panosSTIG_stigrule_77239_Manage
+# R-77241 PANW-NM-000097
+- name : stigrule_77241_enable_alarm_generation
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77241_enable_alarm_generation_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77241_enable_alarm_generation_Element }}"
+  when: panosSTIG_stigrule_77241_Manage
+# R-77249 PANW-NM-000101
+- name : stigrule_77249_timezone
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77249_timezone_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77249_timezone_Element }}"
+  when: panosSTIG_stigrule_77249_Manage
+# R-77253 PANW-NM-000114
+- name : stigrule_77253_password_password_change_on_first_login
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77253_password_password_change_on_first_login_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77253_password_password_change_on_first_login_Element }}"
+  when: panosSTIG_stigrule_77253_Manage
+# R-77273 PANW-NM-000144
+- name : stigrule_77273_enable_log_high_dp_load
+  notify: "save configuration"
+  panos_config_element:
+    provider: "{{ provider }}"
+    xpath: "{{ panosSTIG_stigrule_77273_enable_log_high_dp_load_Xpath }}"
+    element: "{{ panosSTIG_stigrule_77273_enable_log_high_dp_load_Element }}"
+  when: panosSTIG_stigrule_77273_Manage

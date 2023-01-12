@@ -1,0 +1,67 @@
+- name: Configuring TMUX
+  hosts: "*"
+  become: yes
+  tasks:
+ 
+   - name: Support session locking with tmux
+     shell:
+       cmd: |-
+                        # Remediation is applicable only in certain platforms
+                        if rpm --quiet -q tmux; then
+
+                        if ! grep -x '  case "$name" in sshd|login) exec tmux ;; esac' /etc/bashrc; then
+                            cat >> /etc/profile.d/tmux.sh <<'EOF'
+                        if [ "$PS1" ]; then
+                          parent=$(ps -o ppid= -p $$)
+                          name=$(ps -o comm= -p $parent)
+                          case "$name" in sshd|login) exec tmux ;; esac
+                        fi
+                        EOF
+                            chmod 0644 /etc/profile.d/tmux.sh
+                        fi
+
+                                else
+                            >&2 echo 'Remediation is not applicable, nothing was done'
+                        fi 
+   - name: Configure tmux to lock session after inactivity
+     shell:
+       cmd: |-
+                        if grep -qP '^\s*set\s+-g\s+lock-after-time' "/etc/tmux.conf" ; then
+                            sed -i 's/^\s*set\s\+-g\s\+lock-after-time.*$/set -g lock-after-time 900/' "/etc/tmux.conf"
+                              else
+                            echo "set -g lock-after-time 900" >> "/etc/tmux.conf"
+                        fi
+                        chmod 0644 "/etc/tmux.conf"
+
+                                else
+                            >&2 echo 'Remediation is not applicable, nothing was done'
+                        fi
+     ignore_errors: yes
+ 
+   - name: Configure the tmux Lock Command
+     shell:
+       cmd: |-
+                        if grep -qP '^\s*set\s+-g\s+lock-command' "/etc/tmux.conf" ; then
+                            sed -i 's/^\s*set\s\+-g\s\+lock-command.*$/set -g lock-command vlock/' "/etc/tmux.conf"
+                                else
+                            echo "set -g lock-command vlock" >> "/etc/tmux.conf"
+                        fi
+                        chmod 0644 "/etc/tmux.conf"
+
+                                else
+                            >&2 echo 'Remediation is not applicable, nothing was done'
+                        fi
+     ignore_errors: yes
+
+   - name: Prevent user from disabling the screen lock
+     shell:
+       cmd: |-
+           
+                        if grep -q 'tmux\s*$' /etc/shells ; then
+                        	sed -i '/tmux\s*$/d' /etc/shells
+                        fi
+        
+                        else
+                            >&2 echo 'Remediation is not applicable, nothing was done'
+                        fi
+     ignore_errors: yes   
